@@ -1,0 +1,97 @@
+#!/bin/zsh
+# InternshipHunt control command.
+# Absolute paths throughout so this works from any directory.
+
+LABEL="com.internshiphunt.tracker"
+PLIST="$HOME/Library/LaunchAgents/com.internshiphunt.tracker.plist"
+URL="http://localhost:4321"
+LOG="$HOME/InternshipHunt/app/logs/internshiphunt.log"
+ERRLOG="$HOME/InternshipHunt/app/logs/internshiphunt-error.log"
+TARGET="gui/$(id -u)/$LABEL"
+
+code() { curl -s -o /dev/null -m 3 -w "%{http_code}" "$URL/" 2>/dev/null; }
+
+wait_up() {
+  local i
+  for i in {1..20}; do
+    [[ "$(code)" == "200" ]] && return 0
+    sleep 0.5
+  done
+  return 1
+}
+
+case "${1:-open}" in
+
+  open|"")
+    if [[ "$(code)" != "200" ]]; then
+      echo "App is not responding. Starting it first."
+      launchctl kickstart "$TARGET" >/dev/null 2>&1
+      wait_up || { echo "It did not come up. Run: ih errors"; exit 1; }
+    fi
+    open "$URL"
+    echo "Opened $URL"
+    ;;
+
+  status)
+    local_code=$(code)
+    if [[ "$local_code" == "200" ]]; then
+      echo "RUNNING. $URL is answering."
+    else
+      echo "NOT ANSWERING (http '$local_code')."
+    fi
+    pid=$(lsof -nP -iTCP:4321 -sTCP:LISTEN -t 2>/dev/null | head -1)
+    [[ -n "$pid" ]] && echo "Listening on port 4321, process $pid." || echo "Nothing is listening on port 4321."
+    launchctl print "$TARGET" >/dev/null 2>&1 \
+      && echo "Autostart is ON (it restarts itself at login and after a crash)." \
+      || echo "Autostart is OFF. Run: ih start"
+    ;;
+
+  restart)
+    echo "Restarting..."
+    launchctl kickstart -k "$TARGET" >/dev/null 2>&1
+    if wait_up; then echo "Back up at $URL"; else echo "It did not come back. Run: ih errors"; exit 1; fi
+    ;;
+
+  start)
+    launchctl bootstrap "gui/$(id -u)" "$PLIST" >/dev/null 2>&1
+    launchctl kickstart "$TARGET" >/dev/null 2>&1
+    if wait_up; then echo "Running at $URL. Autostart is back ON."; else echo "It did not start. Run: ih errors"; exit 1; fi
+    ;;
+
+  stop)
+    launchctl bootout "$TARGET" >/dev/null 2>&1
+    echo "Stopped, and it will stay down until you run: ih start"
+    ;;
+
+  logs)
+    tail -n "${2:-50}" "$LOG"
+    ;;
+
+  errors)
+    if [[ -s "$ERRLOG" ]]; then tail -n "${2:-50}" "$ERRLOG"; else echo "Error log is empty. Nothing has crashed."; fi
+    ;;
+
+  watch)
+    echo "Live log. Press Control-C to stop."
+    tail -f "$LOG"
+    ;;
+
+  help|-h|--help)
+    cat <<'EOF'
+ih              Open the tracker in your browser (starts it first if needed)
+ih status       Is it running, on what process, is autostart on
+ih restart      Restart it, for example after a code change
+ih stop         Stop it and keep it down
+ih start        Start it again and turn autostart back on
+ih logs [n]     Last n lines of the normal log (default 50)
+ih errors [n]   Last n lines of the error log
+ih watch        Follow the log live
+EOF
+    ;;
+
+  *)
+    echo "Unknown command: $1"
+    echo "Run: ih help"
+    exit 1
+    ;;
+esac

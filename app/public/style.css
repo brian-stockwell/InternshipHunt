@@ -1,0 +1,662 @@
+/* InternshipHunt styles. Light and dark mode via CSS variables; the browser's
+   prefers-color-scheme setting picks which set is active. */
+
+:root {
+  --bg: #f7f7f5;
+  --panel: #ffffff;
+  --text: #1c1c1e;
+  --muted: #6b6b70;
+  --border: #e2e2e0;
+  --accent: #2f6fed;
+  --accent-text: #ffffff;
+  --good: #2e8b57;
+  /* Warning and danger inks, tuned to pass contrast on the panel background.
+     The action banner and the overdue countdowns depend on these. */
+  --warn: #9a5b00;
+  --bad: #b3261e;
+  --warn-bg: #fff6e5;
+  --warn-border: #e8c37a;
+  --warn-text: #7a5a12;
+  --error-bg: #fdecec;
+  --error-border: #e6a0a0;
+  --error-text: #8f2020;
+  --chip-bg: #e8ecf3;
+  --row-hover: #f0f4fb;
+  --shadow: rgba(0, 0, 0, 0.28);
+  --control-h: 32px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17181a;
+    --panel: #212226;
+    --text: #e8e8ea;
+    --muted: #9a9aa2;
+    --border: #35363b;
+    --accent: #5b8def;
+    --accent-text: #ffffff;
+    --good: #4cba7c;
+    --warn: #e8a33d;
+    --bad: #f07b72;
+    --warn-bg: #3a3020;
+    --warn-border: #7a6430;
+    --warn-text: #e8c37a;
+    --error-bg: #3a2222;
+    --error-border: #7a3c3c;
+    --error-text: #e6a0a0;
+    --chip-bg: #33353d;
+    --row-hover: #262c38;
+    --shadow: rgba(0, 0, 0, 0.55);
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+/* ---------- Top bar (header + tabs stick together as ONE unit, so the tab
+   bar can never hide underneath a wrapped header at narrow widths) ---------- */
+#topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+#header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 10px 18px 6px;
+}
+.header-title { font-size: 17px; font-weight: 700; }
+.freshness { color: var(--muted); }
+.freshness.warn {
+  color: var(--warn-text);
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  border-radius: 6px;
+  padding: 2px 8px;
+}
+.badges { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.badge {
+  background: var(--chip-bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 10px;
+  color: var(--muted);
+}
+.badge b { color: var(--text); font-weight: 600; }
+.badge.alert { background: var(--error-bg); border-color: var(--error-border); color: var(--error-text); }
+.badge.alert b { color: var(--error-text); }
+.badge.notice { background: var(--warn-bg); border-color: var(--warn-border); color: var(--warn-text); }
+.badge.notice b { color: var(--warn-text); }
+.badge.clickable { cursor: pointer; }
+
+/* A quiet strip that appears only when the app itself cannot be reached. */
+#offline-strip {
+  background: var(--error-bg);
+  color: var(--error-text);
+  border-top: 1px solid var(--error-border);
+  padding: 6px 18px;
+  font-size: 13px;
+}
+
+#tabs {
+  display: flex;
+  gap: 4px;
+  padding: 2px 18px 0;
+}
+.tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 8px 14px;
+  font-size: 14px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.tab.active { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
+
+main { padding: 16px 18px 60px; max-width: 1320px; margin: 0 auto; }
+.hidden { display: none !important; }
+
+/* ---------- Shared controls: one height everywhere ---------- */
+.filters input[type="search"], .filters select, .small, button.primary {
+  height: var(--control-h);
+}
+.small {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 7px;
+  padding: 4px 10px;
+  font-size: 12.5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+.small:hover { border-color: var(--accent); color: var(--accent); }
+/* Remove: quiet by default so it never competes with the real action on the
+   row, and only reads as a discard on hover. */
+.small.remove { color: var(--muted); }
+.small.remove:hover { border-color: var(--error-text); color: var(--error-text); }
+button.primary {
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: var(--accent-text);
+  border-radius: 7px;
+  padding: 4px 12px;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+button:disabled, .small:disabled { opacity: 0.55; cursor: default; }
+/* Row-level accent action: outlined, so fifty of them do not out-shout the
+   one real primary button on the page. */
+.accent-outline {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 7px;
+  padding: 4px 12px;
+  font-size: 12.5px;
+  cursor: pointer;
+  height: var(--control-h);
+  display: inline-flex;
+  align-items: center;
+}
+.accent-outline:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+
+/* ---------- Coming up strip (deadlines and follow-ups) ---------- */
+.upcoming {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--warn);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+.upcoming h3 { margin: 0 0 4px; font-size: 14px; }
+.upcoming .up-row { display: flex; gap: 10px; align-items: baseline; padding: 3px 0; flex-wrap: wrap; }
+.upcoming .up-when { white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--warn); font-weight: 600; min-width: 130px; }
+.upcoming .up-when.overdue { color: var(--bad); font-weight: 700; }
+.upcoming a { color: var(--text); text-decoration: none; }
+.upcoming a:hover { color: var(--accent); }
+.upcoming .up-kind { color: var(--muted); font-size: 12.5px; }
+
+/* ---------- Needs attention ---------- */
+.attention {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  border-left: 4px solid var(--warn);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+.attention h3 { margin: 0 0 8px; color: var(--warn-text); font-size: 14px; display: flex; align-items: center; gap: 12px; }
+.attention .attention-expand { margin-left: 0; }
+.suggestion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-top: 1px solid var(--warn-border);
+  flex-wrap: wrap;
+}
+.suggestion:first-of-type { border-top: none; }
+.suggestion .evidence { color: var(--muted); flex: 1 1 300px; }
+.orphan-note { color: var(--muted); font-style: italic; flex: 1 1 300px; }
+.attention-dismiss {
+  margin-left: auto;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.attention-dismiss:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ---------- Filters ---------- */
+.filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+.filters input[type="search"], .filters select {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+.filters input[type="search"] { flex: 1 1 220px; }
+.toggle { color: var(--muted); display: flex; align-items: center; gap: 5px; }
+.filter-count { color: var(--muted); font-size: 12.5px; }
+
+/* ---------- Posting groups and rows ---------- */
+.group { margin-bottom: 22px; }
+.group h2 { margin: 0 0 6px; }
+.group-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 4px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.group-toggle:hover { background: var(--row-hover); }
+.group-toggle .caret { width: 1em; color: var(--muted); }
+.group-toggle .group-count {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 12.5px;
+  background: var(--chip-bg);
+  border-radius: 999px;
+  padding: 1px 9px;
+}
+.group-body {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Rows are a grid so the deadline always lands in the same column:
+   main info | deadline | actions. One vertical sweep finds every date. */
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px max-content;
+  gap: 4px 12px;
+  align-items: center;
+  padding: 10px 14px;
+  border-top: 1px solid var(--border);
+  cursor: pointer;
+}
+.row:first-child { border-top: none; }
+.row:hover { background: var(--row-hover); }
+.row .main-col { min-width: 0; }
+.row .company { font-weight: 600; }
+.row .role { color: var(--muted); }
+.row .meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 2px; }
+.row .due-col {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: 12.5px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.row .due-col .due-date { display: block; color: var(--text); }
+.row .due-col.due-soon .due-date, .row .due-col.due-soon { color: var(--warn); font-weight: 600; }
+.row .due-col.due-past .due-date, .row .due-col.due-past { color: var(--bad); font-weight: 600; }
+@media (max-width: 680px) {
+  .row { grid-template-columns: minmax(0, 1fr); }
+  .row .due-col { text-align: left; }
+}
+
+/* A row the user just triaged stays where it was, muted, with an Undo. */
+.row.triaged { opacity: 0.55; cursor: default; }
+.row .triaged-note { color: var(--muted); font-size: 12.5px; margin-right: 8px; }
+
+.chip {
+  background: var(--chip-bg);
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chip.rank1 { color: var(--good); font-weight: 600; }
+.chip.deadline { color: var(--warn-text); background: var(--warn-bg); }
+.chip.stage {
+  background: color-mix(in srgb, var(--accent) 14%, var(--panel));
+  color: var(--accent);
+  font-weight: 600;
+}
+/* The seven categories each get a stable tint, so the category axis is
+   scannable without reading every chip. */
+.chip.cat { font-weight: 500; }
+.chip.cat-c0 { background: color-mix(in srgb, #2e8b57 15%, var(--panel)); color: color-mix(in srgb, #2e8b57 60%, var(--text)); }
+.chip.cat-c1 { background: color-mix(in srgb, #0f766e 15%, var(--panel)); color: color-mix(in srgb, #0f766e 60%, var(--text)); }
+.chip.cat-c2 { background: color-mix(in srgb, #2f6fed 14%, var(--panel)); color: color-mix(in srgb, #2f6fed 60%, var(--text)); }
+.chip.cat-c3 { background: color-mix(in srgb, #6d5ae6 15%, var(--panel)); color: color-mix(in srgb, #6d5ae6 60%, var(--text)); }
+.chip.cat-c4 { background: color-mix(in srgb, #c2570f 15%, var(--panel)); color: color-mix(in srgb, #c2570f 60%, var(--text)); }
+.chip.cat-c5 { background: color-mix(in srgb, #b83280 14%, var(--panel)); color: color-mix(in srgb, #b83280 60%, var(--text)); }
+.chip.cat-c6 { background: color-mix(in srgb, #64748b 18%, var(--panel)); color: color-mix(in srgb, #64748b 65%, var(--text)); }
+
+.row .actions { display: flex; gap: 6px; align-items: center; }
+.row .chevron { color: var(--muted); font-size: 20px; line-height: 1; padding: 0 2px; }
+#detail .detail-actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 14px; }
+.repost-link { font-size: 12.5px; color: var(--muted); }
+.empty-note { padding: 14px; color: var(--muted); }
+.empty-note button { margin-left: 8px; }
+
+/* ---------- Detail panel ---------- */
+#detail-backdrop {
+  position: fixed; inset: 0;
+  background: var(--shadow);
+  z-index: 30;
+}
+#detail {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: min(480px, 100vw);
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  box-shadow: -12px 0 32px var(--shadow);
+  z-index: 31;
+  overflow-y: auto;
+  padding: 18px;
+}
+#detail .detail-head { display: flex; align-items: flex-start; gap: 10px; }
+#detail .detail-head h2 { margin: 0 0 2px; font-size: 18px; flex: 1 1 auto; }
+#detail .subtitle { color: var(--muted); margin-bottom: 12px; }
+#detail .open-link {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--accent-text);
+  border-radius: 8px;
+  padding: 8px 16px;
+  text-decoration: none;
+  font-weight: 600;
+  margin: 8px 0 16px;
+}
+#detail dl { display: grid; grid-template-columns: 130px 1fr; gap: 4px 10px; margin: 0 0 16px; }
+#detail dt { color: var(--muted); }
+#detail dd { margin: 0; overflow-wrap: anywhere; }
+#detail .edit-form { border-top: 1px solid var(--border); padding-top: 12px; display: grid; gap: 10px; }
+#detail .edit-form label { display: grid; gap: 3px; color: var(--muted); font-size: 12.5px; }
+#detail .edit-form input, #detail .edit-form select, #detail .edit-form textarea {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 6px 9px;
+  font-size: 13.5px;
+  font-family: inherit;
+}
+/* The save row stays reachable without scrolling to the bottom of the form. */
+#detail .form-actions {
+  position: sticky;
+  bottom: -18px;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  margin: 4px -18px -18px;
+  padding: 12px 18px 14px;
+  display: flex;
+  gap: 8px;
+}
+#detail .form-error { color: var(--bad); font-size: 12.5px; align-self: center; }
+
+/* ---------- Research and scans panel ---------- */
+#scans-panel {
+  margin: 18px 0 14px;
+  padding: 12px 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+#scans-panel h3 { margin: 0 0 8px; font-size: 14px; }
+#scans-panel .scan-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+  flex-wrap: wrap;
+}
+#scans-panel .scan-row > button { flex: 0 0 auto; min-width: 230px; }
+#scans-panel .scan-desc { color: var(--muted); font-size: 13px; flex: 1 1 260px; min-width: 0; }
+#scans-panel .scan-desc.blocked { color: var(--warn); }
+#scans-panel .scan-standing {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12.5px;
+}
+#research-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0 0;
+  flex-wrap: wrap;
+}
+.research-status { color: var(--muted); font-size: 13px; flex: 1 1 260px; }
+.research-status.running { color: var(--good); }
+
+/* ---------- Moving forward strip (next-round news) ---------- */
+.next-round {
+  margin-bottom: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--good);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--good) 7%, var(--panel));
+}
+.next-round h3 { margin: 0 0 4px; color: var(--good); }
+.nr-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.nr-row:first-of-type { border-top: none; }
+.nr-row .nr-main { flex: 1 1 320px; min-width: 0; }
+.nr-row a { color: var(--accent); }
+.nr-src { color: var(--muted); font-size: 12.5px; }
+.nr-row.done { opacity: 0.55; }
+.nr-row.done s { color: var(--muted); }
+
+/* ---------- Action required banner ---------- */
+.action-required {
+  margin-bottom: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--warn-border);
+  border-left: 4px solid var(--bad);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--bad) 7%, var(--panel));
+}
+.action-required h3 { margin: 0 0 4px; color: var(--bad); }
+.action-required details { margin: 0 0 10px; }
+.action-required summary { color: var(--muted); font-size: 12.5px; cursor: pointer; }
+.action-required .action-note { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+.action-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.action-row .action-main { flex: 1 1 320px; min-width: 0; }
+.action-row a { color: var(--accent); }
+.action-due { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.action-due.urgent { color: var(--warn); font-weight: 600; }
+.action-due.overdue { color: var(--bad); font-weight: 700; }
+.action-due.none { color: var(--muted); }
+.action-unmatched { color: var(--warn); }
+.action-row.done { opacity: 0.55; }
+.action-row.done s { color: var(--muted); }
+
+/* ---------- Research feed ---------- */
+.research-feed {
+  flex-basis: 100%;
+  border-top: 1px solid var(--border);
+  margin-top: 6px;
+  padding-top: 8px;
+  display: grid;
+  gap: 3px;
+}
+.research-feed .feed-line {
+  font-size: 12.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.research-feed .feed-line:last-child { color: var(--text); }
+.research-feed .feed-time { font-variant-numeric: tabular-nums; margin-right: 8px; }
+
+/* ---------- Apply / add dialog ---------- */
+#apply-backdrop {
+  position: fixed; inset: 0;
+  background: var(--shadow);
+  z-index: 40;
+}
+#apply-modal {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(440px, calc(100vw - 32px));
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  z-index: 41;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+#apply-modal h3 { margin: 0 0 2px; font-size: 16px; }
+#apply-modal .apply-sub { color: var(--muted); margin-bottom: 14px; }
+#apply-modal label { display: grid; gap: 3px; color: var(--muted); font-size: 12.5px; margin-bottom: 12px; }
+#apply-modal input, #apply-modal textarea, #apply-modal select {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 7px 10px;
+  font-size: 13.5px;
+  font-family: inherit;
+}
+#apply-modal .apply-actions { display: flex; gap: 8px; justify-content: flex-end; align-items: center; }
+#apply-modal .form-error { color: var(--bad); font-size: 12.5px; margin-right: auto; }
+
+/* ---------- Outreach / Reports ---------- */
+.doc-list { display: grid; gap: 14px; }
+.doc {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.doc .doc-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+.doc .doc-name { font-weight: 600; }
+.doc .doc-head .copy-btn, .doc .doc-head .doc-toggle { margin-left: auto; }
+.doc .doc-head .copy-btn + .doc-toggle, .doc .doc-head .copy-btn + .copy-btn { margin-left: 0; }
+.markdown { overflow-x: auto; max-width: 72ch; }
+.markdown h1 { font-size: 20px; margin: 18px 0 8px; }
+.markdown h2 { font-size: 17px; margin: 16px 0 6px; }
+.markdown h3 { font-size: 15px; margin: 14px 0 6px; }
+.markdown p { margin: 8px 0; }
+.markdown ul, .markdown ol { margin: 8px 0; padding-left: 22px; }
+.markdown code { background: var(--chip-bg); border-radius: 4px; padding: 1px 4px; }
+.markdown pre { background: var(--chip-bg); border-radius: 8px; padding: 10px; overflow-x: auto; }
+.markdown a { color: var(--accent); }
+/* The sendable part of an outreach draft, visually split from the notes. */
+.email-block {
+  background: var(--bg);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-top: 10px;
+}
+
+/* ---------- Log ---------- */
+.error-card {
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.error-card .error-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.error-card .error-title { font-weight: 600; color: var(--error-text); }
+.error-card pre {
+  background: var(--panel);
+  border-radius: 8px;
+  padding: 10px;
+  overflow-x: auto;
+  font-size: 12px;
+}
+#log-list {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px 14px;
+}
+.log-entry {
+  display: flex;
+  gap: 12px;
+  padding: 7px 4px;
+  border-bottom: 1px solid var(--border);
+}
+.log-entry:last-child { border-bottom: none; }
+.log-entry .log-time {
+  color: var(--muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  flex: 0 0 128px;
+  text-align: right;
+}
+.log-entry.kind-error .log-text { color: var(--error-text); }
+.log-entry.kind-warn .log-text { color: var(--warn-text); }
+
+/* ---------- Toast (something went wrong with an action) ---------- */
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  background: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid var(--error-border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  z-index: 50;
+  box-shadow: 0 6px 24px var(--shadow);
+  max-width: min(560px, calc(100vw - 32px));
+  /* Flex so the Undo button sits beside the message. .hidden is !important,
+     so this cannot keep the toast on screen. */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+#toast.info {
+  background: var(--panel);
+  color: var(--text);
+  border-color: var(--border);
+}
+/* The undo for anything removed lives here, not in a greyed-out row left
+   sitting in the banner. */
+.toast-undo {
+  background: transparent;
+  border: 1px solid currentColor;
+  color: inherit;
+  border-radius: 7px;
+  padding: 3px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  flex: none;
+}
+.toast-undo:hover { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }

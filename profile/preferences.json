@@ -1,0 +1,18 @@
+{
+  "_help": [
+    "Your search settings. Claude fills this in during setup; you can also edit it by hand.",
+    "email_addresses: every email you apply from. The weekly finder searches all of them. The first one is the default portal email.",
+    "categories: the buckets every posting gets sorted into (short names, for example Software, Data, Consulting). Use 3 to 8.",
+    "rank1_cities: cities you most want (lowercase is fine). A posting in any of these ranks 1.",
+    "rank2_states: two-letter state codes that are good but not top choice. A posting there ranks 2.",
+    "remote_is_rank2: true means Remote (US) postings rank 2. Everything else ranks 3.",
+    "After editing, restart the app: ~/InternshipHunt/bin/ih restart"
+  ],
+  "email_addresses": [],
+  "categories": ["Finance", "Consulting", "Data", "Software", "Engineering", "Marketing", "Operations", "Other"],
+  "rank1_label": "top choice",
+  "rank1_cities": [],
+  "rank2_label": "good fit",
+  "rank2_states": [],
+  "remote_is_rank2": true
+}

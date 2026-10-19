@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>InternshipHunt</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header and tabs stick together as one unit, so the tabs can never
+       slide underneath a wrapped header at narrow widths. -->
+  <div id="topbar">
+    <header id="header">
+      <div class="header-title">InternshipHunt</div>
+      <div id="freshness" class="freshness"></div>
+      <div class="badges">
+        <span class="badge" id="badge-pending" title="Pending suggestions waiting for your confirm">Suggestions: 0</span>
+        <span class="badge" id="badge-errors" title="Deliveries that failed ingest">Errors: 0</span>
+        <span class="badge" id="badge-unapplied" title="Postings in New or Interested that you have not applied to">Unapplied: 0</span>
+        <span class="badge" id="badge-week" title="Applications logged in the last 7 days">This week: 0</span>
+        <span class="badge" id="badge-totals" title="Total postings ever ingested">Total: 0</span>
+      </div>
+    </header>
+    <nav id="tabs">
+      <button class="tab active" data-tab="postings">Postings</button>
+      <button class="tab" data-tab="reports">Reports</button>
+      <button class="tab" data-tab="log">Log</button>
+    </nav>
+    <div id="offline-strip" class="hidden"></div>
+  </div>
+
+  <main>
+    <!-- Tab 1: Postings -->
+    <section id="tab-postings" class="tab-panel">
+      <div id="action-required" class="action-required hidden"></div>
+      <div id="next-round" class="next-round hidden"></div>
+      <div id="attention" class="attention hidden"></div>
+      <div id="upcoming" class="upcoming hidden"></div>
+      <div class="filters">
+        <input id="f-search" type="search" placeholder="Search company, role, req id, notes...">
+        <select id="f-category">
+          <option value="">All categories</option>
+        </select>
+        <select id="f-status">
+          <option value="">All statuses</option>
+          <option value="new">new</option><option value="interested">interested</option><option value="applied">applied</option>
+          <option value="oa">online assessment</option><option value="interview">interview</option><option value="offer">offer</option>
+          <option value="rejected">rejected</option><option value="withdrawn">withdrawn</option><option value="closed">closed</option>
+        </select>
+        <select id="f-rank">
+          <option value="">All regions</option>
+        </select>
+        <select id="f-source"><option value="">All sources</option></select>
+        <select id="f-sort">
+          <option value="fit">Sort: best fit</option>
+          <option value="deadline">Sort: closing soonest</option>
+          <option value="newest">Sort: newest first</option>
+          <option value="company">Sort: company A to Z</option>
+        </select>
+        <label class="toggle"><input id="f-hidden" type="checkbox"> Show hidden</label>
+        <span id="filter-count" class="filter-count"></span>
+        <button class="primary" id="add-posting">+ Add posting</button>
+        <button class="small" id="add-action" title="For something you heard by text, phone, or in person, that no scan will ever find">+ Add action required</button>
+      </div>
+      <div id="groups"></div>
+      <!-- All scan controls live in ONE panel so it is always clear what each
+           scan covers and that the weekly sweep does all of it on its own. -->
+      <div id="scans-panel">
+        <h3>Research and scans</h3>
+        <div class="scan-row">
+          <button class="primary" id="find-more">Find more opportunities</button>
+          <span class="scan-desc">Hunts the web for new postings right now, on top of the weekly sweep. Does not read email.</span>
+        </div>
+        <div class="scan-row">
+          <button class="primary" id="rescan-email">Rescan email for applications</button>
+          <span class="scan-desc" id="rescan-note"></span>
+        </div>
+        <div id="research-bar">
+          <span id="research-status" class="research-status"></span>
+          <button class="small hidden" id="research-stop">Stop the run</button>
+          <div id="research-feed" class="research-feed hidden"></div>
+        </div>
+        <div class="scan-standing" id="scan-standing"></div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Reports -->
+    <section id="tab-reports" class="tab-panel hidden">
+      <div id="reports-list" class="doc-list"></div>
+    </section>
+
+    <!-- Tab 3: Log -->
+    <section id="tab-log" class="tab-panel hidden">
+      <div id="error-list"></div>
+      <div class="filters">
+        <input id="log-search" type="search" placeholder="Filter the log...">
+      </div>
+      <div id="log-list"></div>
+    </section>
+  </main>
+
+  <!-- Detail panel (opens when a posting row is clicked) -->
+  <div id="detail-backdrop" class="hidden"></div>
+  <aside id="detail" class="hidden"></aside>
+
+  <!-- Apply dialog (opens when an Applied button is pressed) -->
+  <div id="apply-backdrop" class="hidden"></div>
+  <div id="apply-modal" class="hidden"></div>
+
+  <!-- Error toast for failed actions -->
+  <div id="toast" class="hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

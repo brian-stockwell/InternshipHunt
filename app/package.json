@@ -1,0 +1,16 @@
+{
+  "name": "internshiphunt-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A local internship tracker: the single home for every posting, status, and report.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js --open",
+    "test": "node --test 'test/*.test.js'",
+    "install-autostart": "node autostart.js install",
+    "uninstall-autostart": "node autostart.js uninstall"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}

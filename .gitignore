@@ -1,0 +1,11 @@
+# Created on each person's Mac when the app runs; never shared.
+node_modules/
+data/
+inbox/
+reports/
+outreach/
+backups/
+logs/
+cowork/requests/
+cowork/seen.jsonl
+.DS_Store
