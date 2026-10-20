@@ -1061,7 +1061,7 @@ function renderPostings(force = false) {
     note.innerHTML = `<div class="group-body"><div class="empty-note">${
       filtered
         ? `No postings match these filters.<button class="small" id="clear-filters">Clear filters</button>`
-        : "No postings yet. When the weekly researcher delivers its first findings, they will appear here."
+        : `No postings yet. When the weekly researcher delivers its first findings, they will appear here. While you wait, <a href="tutorial/" target="_blank" rel="noopener">try the tutorial</a> to practice every button on made-up data.`
     }</div></div>`;
     box.prepend(note);
     const cf = note.querySelector("#clear-filters");

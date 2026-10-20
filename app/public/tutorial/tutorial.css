@@ -1,0 +1,296 @@
+/* tutorial.css: the coach around the practice copy. Colors come from the
+   app's own variables in ../style.css, so light and dark mode match it. */
+
+:root {
+  --coach-w: 360px;
+  --coach-sheet-h: 46vh;
+}
+
+/* The tutorial is its own page; the app's link back to it would loop. */
+#tutorial-link { display: none !important; }
+
+/* ---------- Layout: sidebar on wide screens ---------- */
+#coach {
+  position: fixed;
+  z-index: 60;
+  background: var(--panel);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 20px 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+body.coach-docked #coach {
+  top: 0; left: 0; bottom: 0;
+  width: var(--coach-w);
+  border-right: 1px solid var(--border);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.06);
+}
+body.coach-docked #app-root { margin-left: var(--coach-w); }
+/* Keep the app's centered dialog and message clear of the sidebar. */
+body.coach-docked #apply-modal { left: calc(50% + var(--coach-w) / 2); }
+body.coach-docked #toast { left: calc(50% + var(--coach-w) / 2); }
+
+/* ---------- Layout: bottom sheet on narrow screens ---------- */
+body.coach-sheet #coach {
+  left: 0; right: 0; bottom: 0;
+  max-height: var(--coach-sheet-h);
+  border-top: 1px solid var(--border);
+  border-radius: 14px 14px 0 0;
+  box-shadow: 0 -8px 28px var(--shadow);
+  padding: 14px 16px 12px;
+}
+body.coach-sheet #app-root { padding-bottom: var(--coach-sheet-h); }
+body.coach-sheet #toast { bottom: calc(var(--coach-sheet-h) + 12px); }
+
+/* ---------- Minimized ---------- */
+#coach-pill {
+  display: none;
+  position: fixed;
+  z-index: 60;
+  left: 16px;
+  bottom: 16px;
+  max-width: min(420px, calc(100vw - 32px));
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px 8px 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 6px 24px var(--shadow);
+}
+#coach-mini-task {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+body.coach-min #coach { display: none; }
+body.coach-min #coach-pill { display: flex; }
+body.coach-min #app-root { margin-left: 0; padding-bottom: 72px; }
+body.coach-min #apply-modal, body.coach-min #toast { left: 50%; }
+body.coach-min.coach-sheet #toast { bottom: 84px; }
+
+/* ---------- Coach contents ---------- */
+.coach-top { display: flex; align-items: center; gap: 8px; }
+.coach-brand { font-weight: 700; font-size: 13px; letter-spacing: 0.01em; flex: 1 1 auto; }
+.coach-icon {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.coach-icon:hover { color: var(--accent); border-color: var(--accent); }
+
+.coach-progress { height: 4px; background: var(--chip-bg); border-radius: 4px; overflow: hidden; }
+#coach-bar { height: 100%; width: 0; background: var(--accent); transition: width 0.3s ease; }
+
+.coach-chapter { color: var(--muted); font-size: 12.5px; margin-bottom: -6px; }
+#coach h1 { font-size: 19px; line-height: 1.3; margin: 0; text-wrap: balance; }
+
+.coach-body { font-size: 14px; line-height: 1.55; }
+.coach-body p { margin: 0 0 10px; }
+.coach-body p:last-child { margin-bottom: 0; }
+.coach-body ul, .coach-body ol { margin: 0 0 10px; padding-left: 20px; }
+.coach-body li { margin-bottom: 5px; }
+.coach-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px;
+  background: var(--chip-bg);
+  border-radius: 5px;
+  padding: 1px 5px;
+  overflow-wrap: anywhere;
+}
+.coach-body a { color: var(--accent); }
+
+.coach-code {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  padding: 8px 8px 8px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+.coach-code code { background: none; padding: 0; flex: 1 1 auto; min-width: 0; }
+.coach-copy {
+  flex: 0 0 auto;
+  font: inherit;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+}
+.coach-copy:hover { border-color: var(--accent); color: var(--accent); }
+
+/* The task: a box that ticks when the practice data shows it happened. */
+.coach-task {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  background: color-mix(in srgb, var(--accent) 8%, var(--panel));
+  font-weight: 600;
+  font-size: 14px;
+}
+.coach-task-label {
+  display: block;
+  font-weight: 500;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+.coach-check {
+  flex: 0 0 auto;
+  width: 18px; height: 18px;
+  margin-top: 2px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+}
+.coach-task.done {
+  border-color: color-mix(in srgb, var(--good) 50%, var(--border));
+  background: color-mix(in srgb, var(--good) 10%, var(--panel));
+}
+.coach-task.done .coach-task-label { color: var(--good); }
+.coach-task.done .coach-check {
+  border-color: var(--good);
+  background: var(--good);
+  box-shadow: inset 0 0 0 3px var(--panel);
+}
+
+.coach-extra { display: flex; flex-direction: column; gap: 8px; }
+.coach-extra:empty { display: none; }
+
+.coach-nav { display: flex; gap: 8px; }
+.coach-nav .coach-btn { flex: 1 1 0; }
+.coach-nav:has(.coach-btn:not(.hidden)) { margin-top: 2px; }
+
+.coach-btn {
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 9px 14px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+.coach-btn:hover { border-color: var(--accent); color: var(--accent); }
+.coach-btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+.coach-btn.primary:hover { filter: brightness(1.08); color: var(--accent-text); }
+.coach-btn.quiet { color: var(--muted); }
+.coach-btn:disabled { opacity: 0.45; cursor: default; }
+.coach-btn:focus-visible, .coach-icon:focus-visible, .coach-copy:focus-visible, .coach-link:focus-visible, .coach-toc-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.coach-chapters { border-top: 1px solid var(--border); padding-top: 10px; margin-top: auto; }
+.coach-chapters summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+.coach-chapters ol { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 2px; }
+.coach-toc-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 7px;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+}
+.coach-toc-item:hover { background: var(--row-hover); }
+.coach-toc-item.current { background: var(--row-hover); font-weight: 600; }
+.coach-toc-mark {
+  flex: 0 0 auto;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  font-size: 11px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.coach-toc-item.done .coach-toc-mark { background: var(--good); border-color: var(--good); color: #fff; }
+
+.coach-foot { display: flex; }
+.coach-link {
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.coach-link:hover { color: var(--accent); }
+
+.coach-sr {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* A short glow when a task gets checked off. */
+#coach.flash { animation: coach-flash 0.9s ease; }
+@keyframes coach-flash {
+  0% { box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--good) 70%, transparent); }
+  100% { box-shadow: inset 0 0 0 3px transparent; }
+}
+
+/* ---------- The highlight ring ---------- */
+#coach-ring {
+  position: fixed;
+  z-index: 58;
+  pointer-events: none;
+  border: 2px solid var(--accent);
+  border-radius: 10px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+  animation: coach-pulse 1.8s ease-in-out infinite;
+}
+#coach-ring[hidden] { display: none; }
+@keyframes coach-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent); }
+  50% { box-shadow: 0 0 0 9px color-mix(in srgb, var(--accent) 8%, transparent); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #coach-ring, #coach.flash { animation: none; }
+  #coach-bar { transition: none; }
+}
+
+/* Narrow screens: tighter type so the sheet shows more. */
+@media (max-width: 899px) {
+  #coach { gap: 10px; }
+  #coach h1 { font-size: 17px; }
+  .coach-body { font-size: 13.5px; }
+  .coach-extra { flex-direction: row; flex-wrap: wrap; }
+  .coach-extra .coach-btn { flex: 1 1 auto; }
+}

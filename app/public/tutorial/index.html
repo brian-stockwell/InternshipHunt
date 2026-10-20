@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>InternshipHunt Tutorial</title>
+  <meta name="description" content="A hands-on practice copy of the InternshipHunt tracker, filled with made-up data, with a coach that walks you through every feature.">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="tutorial.css">
+</head>
+<body>
+  <!-- The coach. The practice tracker itself is the real app's page and
+       script, loaded into #app-root by tutorial.js. -->
+  <aside id="coach" aria-label="Tutorial coach">
+    <div class="coach-top">
+      <span class="coach-brand">InternshipHunt tutorial</span>
+      <button type="button" class="coach-icon" id="coach-min" title="Make the coach small" aria-label="Minimize the coach">&#8211;</button>
+    </div>
+    <div class="coach-progress" aria-hidden="true"><div id="coach-bar"></div></div>
+    <div class="coach-chapter" id="coach-chapter">Practice copy</div>
+    <h1 id="coach-title">Loading the practice tracker...</h1>
+    <div id="coach-body" class="coach-body"></div>
+    <div id="coach-task" class="coach-task hidden"></div>
+    <div id="coach-extra" class="coach-extra"></div>
+    <div class="coach-nav">
+      <button type="button" class="coach-btn" id="coach-back">Back</button>
+      <button type="button" class="coach-btn primary" id="coach-next">Next</button>
+    </div>
+    <details class="coach-chapters">
+      <summary>All chapters</summary>
+      <ol id="coach-toc"></ol>
+    </details>
+    <div class="coach-foot">
+      <button type="button" class="coach-link" id="coach-reset">Start over with fresh data</button>
+    </div>
+    <div id="coach-status" class="coach-sr" role="status" aria-live="polite"></div>
+  </aside>
+
+  <!-- Shown instead of the coach while it is minimized. -->
+  <div id="coach-pill">
+    <span id="coach-mini-task"></span>
+    <button type="button" class="coach-btn primary" id="coach-restore">Show coach</button>
+  </div>
+
+  <div id="coach-ring" hidden></div>
+  <div id="app-root"></div>
+
+  <noscript><p style="padding:24px">This tutorial needs JavaScript turned on.</p></noscript>
+  <script src="demo-api.js"></script>
+  <script src="tutorial.js"></script>
+</body>
+</html>

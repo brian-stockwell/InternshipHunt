@@ -4,6 +4,10 @@ A private internship tracker that runs on your own Mac, plus a weekly search tha
 
 Everything you enter stays on your own computer and runs on your own Claude account.
 
+## Try it first
+
+**[Open the interactive tutorial](https://brian-stockwell.github.io/InternshipHunt/)**: the real tracker, filled with a made-up student's search, plus a coach that walks you through every button in about 10 minutes. Nothing to install, and nothing you click there goes anywhere. After setup, the same tutorial is one click away inside your tracker (the **Tutorial** button at the top).
+
 ## Get it
 
 You need a Mac, a paid Claude plan (Pro or Max) with the Claude desktop app, and Node.js from https://nodejs.org.
@@ -28,4 +32,4 @@ Claude takes it from there. The full guide is in [START-HERE.md](START-HERE.md).
 
 ## Keep your info private
 
-This repo is shared with other people. Your profile, settings, and tracker data are meant to stay on your Mac, so never run `git push` from your copy. To get updates later, run `git pull` inside `~/InternshipHunt` (or download the ZIP again).
+Setup fills `profile/` with your details, and the tracker keeps your data in folders that `.gitignore` leaves out of this project. Your copy is meant to stay on your Mac, so never push it to GitHub or anywhere else. To get updates later, run `git pull` inside `~/InternshipHunt` (or download the ZIP again).

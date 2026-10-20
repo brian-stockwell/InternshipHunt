@@ -19,7 +19,7 @@ InternshipHunt is a private internship tracker that runs on your own Mac, plus a
 
 4. **Answer Claude's questions.** It asks about your school, what roles you want, where you want to be, which companies you are most excited about, and which email you apply from. Then it installs everything, opens the tracker in your browser, and helps you turn on the weekly search.
 
-After that, open the tracker any time at http://localhost:4321. To change anything later (new cities, new target companies, a different weekly time), open this folder in Claude's Code tab and just ask.
+After that, open the tracker any time at http://localhost:4321. New to it? The **Tutorial** button at the top of the tracker is a 10-minute, hands-on walkthrough on made-up data. To change anything later (new cities, new target companies, a different weekly time), open this folder in Claude's Code tab and just ask.
 
 ---
 
@@ -84,6 +84,7 @@ Offer to run it once right now so they see postings arrive. A first run takes a 
 Tell the user, briefly:
 
 - Open the tracker at http://localhost:4321 (bookmark it). Tabs: Postings, Reports, Log.
+- The tracker is empty until the first search delivers. Offer to open the tutorial at http://localhost:4321/tutorial/ (the Tutorial button in the header): it runs the real screens on made-up data and walks through every button in about 10 minutes, without touching their tracker.
 - Mark postings Interested, Applied, or Hide as they go. Status suggestions from email show up for one-click confirm.
 - The Mac has to be awake and plugged in when the weekly search runs.
 - `~/InternshipHunt/bin/ih help` lists the controls (open, status, restart, stop, start, logs).
