@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "A local internship tracker: the single home for every posting, status, and report.",
+  "license": "MIT",
   "main": "server.js",
   "scripts": {
     "start": "node server.js --open",

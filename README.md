@@ -33,3 +33,7 @@ Claude takes it from there. The full guide is in [START-HERE.md](START-HERE.md).
 ## Keep your info private
 
 Setup fills `profile/` with your details, and the tracker keeps your data in folders that `.gitignore` leaves out of this project. Your copy is meant to stay on your Mac, so never push it to GitHub or anywhere else. To get updates later, run `git pull` inside `~/InternshipHunt` (or download the ZIP again).
+
+## License
+
+MIT. Use it, change it, and share it, for free. See [LICENSE](LICENSE).
