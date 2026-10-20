@@ -42,13 +42,17 @@
   const code = (text) =>
     `<span class="coach-code"><code>${esc(text)}</code><button type="button" class="coach-copy" data-copy="${esc(text)}">Copy</button></span>`;
   const link = (href, text) => `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(text)}</a>`;
+  const bigLink = (href, text) =>
+    `<a class="coach-btn primary coach-dl" href="${esc(href)}" target="_blank" rel="noopener">${esc(text)}</a>`;
+  const see = (html) => `<div class="coach-see"><span class="coach-see-label">You should see</span>${html}</div>`;
+  const stuck = (html, label = "Stuck?") => `<details class="coach-stuck"><summary>${esc(label)}</summary>${html}</details>`;
 
   // ---------------------------------------------------------------------------
   // The lessons
   // ---------------------------------------------------------------------------
   const CHAPTERS = [
     { id: "welcome", title: "Welcome" },
-    { id: "setup", title: "Set it up" },
+    { id: "setup", title: "Install it" },
     { id: "tour", title: "Find your way around" },
     { id: "triage", title: "Sort new postings" },
     { id: "apply", title: "Log an application" },
@@ -66,11 +70,12 @@
       body: `
         <p>This is a practice copy of the tracker. It runs the real app's screens, filled with a made-up student named Alex who is hunting for Summer 2027 internships in data, software, and finance.</p>
         <p>Click anything you like. Nothing here touches a real tracker, reads any email, or applies anywhere, and starting over puts everything back.</p>
-        <p>This panel is your coach. It gives you one small task at a time, checks it off when you do it, and moves on.</p>`,
+        <p>This panel is your coach. It gives you one small task at a time, checks it off when you do it, and moves on.</p>
+        <p>Have not installed it yet? Chapter 1 takes you through it one click at a time. No coding needed.</p>`,
       welcome: true,
     },
 
-    // ----- Set it up -----
+    // ----- Install it, click by click -----
     {
       ch: "setup",
       title: "How it works",
@@ -80,56 +85,144 @@
           <li><b>The tracker</b>, the page you see here. A small app on your own Mac that keeps every posting, status, and note. Your data never leaves your computer.</li>
           <li><b>The weekly search.</b> Once a week, Claude runs on your Mac. It searches job boards and the career pages of the companies you care about most, opens every link to make sure the job is real, reads your job email for applications and invites, and drops what it found into the tracker.</li>
         </ul>
-        <p>The search does the digging. You review and click.</p>`,
+        <p>You never write code to set it up. You install two free programs, download one folder, and then Claude does the rest while you answer its questions.</p>`,
     },
     {
       ch: "setup",
-      title: "What you need",
+      title: "Before you start",
       body: `
+        <p>Have these ready:</p>
         <ul>
-          <li>A Mac.</li>
-          <li>A paid Claude plan (Pro or Max) and the ${link("https://claude.ai/download", "Claude desktop app")}.</li>
-          <li>Node.js, which is free: download the LTS installer from ${link("https://nodejs.org", "nodejs.org")} and click through it.</li>
+          <li>A Mac running macOS 13 (Ventura) or newer. To check, click the Apple menu in the top left corner, then <b>About This Mac</b>.</li>
+          <li>A paid Claude plan (Pro or Max). Setup happens in the Claude app's <b>Code</b> section, which needs one. See the ${link("https://claude.com/pricing", "Claude plans")}.</li>
+          <li>Your Mac password, the one you type to log in. One installer asks for it.</li>
           <li>The Gmail account you apply to jobs from.</li>
-          <li>About 20 minutes.</li>
-        </ul>`,
-    },
-    {
-      ch: "setup",
-      title: "Get the folder",
-      body: `
-        <p><b>Option A, with Terminal.</b> Open Terminal (Applications, then Utilities) and paste:</p>
-        ${code(`git clone ${REPO}.git ~/InternshipHunt`)}
-        <p><b>Option B, no Terminal.</b> On the ${link(REPO, "project's GitHub page")}, click the green <b>Code</b> button, then <b>Download ZIP</b>. Unzip it, rename the folder from <code>InternshipHunt-main</code> to <code>InternshipHunt</code>, and drag it into your home folder (in Finder: Go, then Home).</p>
-        <p>Either way, the folder has to end up at <code>/Users/your-name/InternshipHunt</code>.</p>`,
-    },
-    {
-      ch: "setup",
-      title: "Let Claude set you up",
-      body: `
-        <p>Open the Claude desktop app, go to the <b>Code</b> tab, choose the <code>InternshipHunt</code> folder, and send:</p>
-        ${code("Read START-HERE.md and set me up.")}
-        <p>Claude interviews you a few questions at a time:</p>
-        <ul>
-          <li>your school, major, year, and graduation date</li>
-          <li>the kinds of roles you want, and the ones you do not</li>
-          <li>your top cities and the states that would also work</li>
-          <li>the 5 to 20 companies you want most (your starred firms)</li>
-          <li>the email addresses you apply from</li>
+          <li>About 30 minutes.</li>
         </ul>
-        <p>Then it installs everything and opens your tracker. Your tracker stays empty until the first search runs, which is exactly why this practice copy exists.</p>`,
+        <p>Keep this page open while you work. Every step ends with <b>You should see</b>, so you always know it worked before moving on.</p>`,
     },
     {
       ch: "setup",
-      title: "Turn on email and the weekly search",
+      title: "1. Install the Claude app",
+      nextLabel: "Done, next step",
       body: `
-        <p>Two switches finish the job. Claude walks you through both.</p>
-        <ol>
-          <li><b>Gmail.</b> In the Claude app's settings, open Connectors and connect Gmail with the account that gets your job email. You sign in yourself; Claude never sees your password.</li>
-          <li><b>The weekly search.</b> A scheduled task in the Claude app. Two settings matter most: it has to <b>run on this computer</b> (not in the cloud), and the <code>InternshipHunt</code> folder has to be attached.</li>
+        <p>Already have the Claude desktop app? Skip to step 2.</p>
+        ${bigLink("https://claude.com/download", "Download the Claude app")}
+        <ol class="coach-clicks">
+          <li>Click the button above, then click <b>Download for macOS</b>.</li>
+          <li>Open your <b>Downloads</b> folder: click the Finder icon in the Dock (the blue and white face), then <b>Downloads</b> in the left column.</li>
+          <li>Double-click the file named <b>Claude</b> that ends in <b>.dmg</b>. If a window opens showing the Claude icon and an <b>Applications</b> folder, drag the Claude icon onto <b>Applications</b>.</li>
+          <li>Open Claude: press <kbd>Command</kbd> and <kbd>Space</kbd> together, type <b>Claude</b>, and press <kbd>Return</kbd>. If your Mac asks whether you are sure you want to open it, click <b>Open</b>.</li>
+          <li>Sign in with your Claude account.</li>
         </ol>
-        <p>Pick an evening when your Mac is usually on and plugged in. A sleeping Mac misses the run.</p>
-        <p>Next, you will practice on Alex's tracker.</p>`,
+        ${see("The Claude app, signed in, with <b>Chat</b>, <b>Cowork</b>, and <b>Code</b> across the top.")}`,
+    },
+    {
+      ch: "setup",
+      title: "2. Install Node.js",
+      nextLabel: "Done, next step",
+      body: `
+        <p>Node.js is a free helper program the tracker runs on. You install it once and never open it.</p>
+        ${bigLink("https://nodejs.org/en/download", "Open the Node.js download page")}
+        <ol class="coach-clicks">
+          <li>On that page, skip the gray box full of commands. Scroll down a little to <b>Or get a prebuilt Node.js for macOS</b> and click <b>macOS Installer (.pkg)</b>.</li>
+          <li>When it finishes, open <b>Downloads</b> and double-click the file that starts with <b>node</b> and ends in <b>.pkg</b>.</li>
+          <li>Click <b>Continue</b>, then <b>Continue</b>, then <b>Agree</b>, then <b>Install</b>.</li>
+          <li>Type your Mac password and click <b>Install Software</b>.</li>
+          <li>Click <b>Close</b>. If it offers to move the installer to the Trash, click <b>Move to Trash</b>.</li>
+        </ol>
+        ${see("<i>The installation was completed successfully.</i>")}
+        ${stuck("<p>If the screens come in a slightly different order, keep clicking <b>Continue</b>, <b>Agree</b>, or <b>Install</b>. Claude double-checks Node.js during setup and tells you if anything is missing.</p>")}`,
+    },
+    {
+      ch: "setup",
+      title: "3. Download InternshipHunt",
+      nextLabel: "Done, next step",
+      body: `
+        ${bigLink(`${REPO}/archive/refs/heads/main.zip`, "Download InternshipHunt")}
+        <ol class="coach-clicks">
+          <li>Click the button above. It is a small download and takes a second.</li>
+          <li>Open your <b>Downloads</b> folder (Finder icon in the Dock, then <b>Downloads</b> on the left).</li>
+        </ol>
+        ${see("Either a file named <b>InternshipHunt-main.zip</b>, or a folder named <b>InternshipHunt-main</b>. Safari unzips downloads for you, so you may already have the folder.")}
+        ${stuck(`<p>Go to the ${link(REPO, "project page")}, click the green <b>Code</b> button, then click <b>Download ZIP</b> at the bottom of the menu.</p>`, "The button did nothing?")}
+        ${stuck(`<p>You can skip steps 3 to 5 with one command:</p>${code(`git clone ${REPO}.git ~/InternshipHunt`)}`, "Comfortable with Terminal?")}`,
+    },
+    {
+      ch: "setup",
+      title: "4. Unzip it and rename it",
+      nextLabel: "Done, next step",
+      body: `
+        <ol class="coach-clicks">
+          <li>If you see <b>InternshipHunt-main.zip</b>, double-click it. A folder named <b>InternshipHunt-main</b> appears next to it. (Already have the folder? Go on to the next line.)</li>
+          <li>Click the <b>InternshipHunt-main</b> folder once so it is highlighted, then press <kbd>Return</kbd>. The name turns into a text box.</li>
+          <li>Delete <b>-main</b> from the end so it reads exactly <b>InternshipHunt</b>, and press <kbd>Return</kbd>.</li>
+        </ol>
+        ${see("A folder named exactly <b>InternshipHunt</b>: capital I, capital H, no spaces, nothing after it.")}
+        ${stuck("<p>Pressing Return did not open the name? Right-click the folder (or hold <kbd>Control</kbd> and click it) and choose <b>Rename</b>.</p>")}`,
+    },
+    {
+      ch: "setup",
+      title: "5. Move it to your home folder",
+      nextLabel: "Done, next step",
+      body: `
+        <p>Your home folder is the one with your name on it, which holds Desktop, Documents, and Downloads. InternshipHunt has to live there.</p>
+        <ol class="coach-clicks">
+          <li>Click the <b>InternshipHunt</b> folder once to highlight it.</li>
+          <li>In the menu bar at the very top of the screen, click <b>Edit</b>, then <b>Copy "InternshipHunt"</b>.</li>
+          <li>Click <b>Go</b> in the menu bar, then <b>Home</b>. The window switches to your home folder.</li>
+          <li>Click <b>Edit</b>, then <b>Paste Item</b>.</li>
+        </ol>
+        ${see("The window is titled with your name (next to a house icon), and <b>InternshipHunt</b> sits beside Desktop, Documents, and Downloads.")}
+        <p>The copy left in Downloads is not needed anymore. You can drag it to the Trash once setup is done.</p>
+        ${stuck("<p>Do not worry about getting this one exactly right. The first thing Claude does in step 7 is check where the folder is, and it can move it for you.</p>", "Not sure it worked?")}`,
+    },
+    {
+      ch: "setup",
+      title: "6. Open the folder in Claude",
+      nextLabel: "Done, next step",
+      body: `
+        <ol class="coach-clicks">
+          <li>Open the Claude app and click <b>Code</b> at the top center.</li>
+          <li>Look at the row of small buttons under the message box. The first one says where Claude works. If it does not say <b>Local</b>, click it and pick the top choice under <b>Local</b>.</li>
+          <li>Click the folder button right next to it, then <b>Open folder...</b></li>
+          <li>In the window that opens, press <kbd>Command</kbd>, <kbd>Shift</kbd>, and <kbd>H</kbd> together to jump to your home folder. Click <b>InternshipHunt</b> once, then click <b>Open</b>.</li>
+          <li>If your Mac asks whether Claude may access that folder, click <b>Allow</b>.</li>
+        </ol>
+        ${see("<b>InternshipHunt</b> shown as the folder in the row under the message box.")}
+        ${stuck("<p>No <b>Code</b> section? It comes with the paid Pro and Max plans. Upgrade at claude.ai, then quit and reopen the Claude app.</p>", "Cannot find Code?")}`,
+    },
+    {
+      ch: "setup",
+      title: "7. Let Claude set it up",
+      nextLabel: "Done, next step",
+      body: `
+        <ol class="coach-clicks">
+          <li>Click <b>Copy</b> below, click in Claude's message box, paste with <kbd>Command</kbd> and <kbd>V</kbd>, and press <kbd>Return</kbd>.</li>
+        </ol>
+        ${code("Read START-HERE.md and set me up.")}
+        <ol class="coach-clicks" start="2">
+          <li>Answer Claude's questions in plain words, like a text. It asks about your school and graduation date, the roles you want and do not want, your top cities, the 5 to 20 companies you want most, and the email you apply from.</li>
+          <li>Before Claude runs a setup command or changes a file, it may stop and ask. Setup has to install things, so saying yes is expected: click the button that approves it (it may say <b>Allow</b> or <b>Accept</b>).</li>
+          <li>Near the end, Claude installs the tracker and opens it in your web browser.</li>
+        </ol>
+        ${see("A browser tab at <code>localhost:4321</code> showing InternshipHunt with <i>Waiting for the first delivery</i>. Empty is normal: postings arrive after the first search.")}
+        ${stuck("<ul><li>Not sure how to answer a question? Say so. Claude can suggest options.</li><li>Something failed? Tell Claude what you see. It can fix most problems and run the installer again.</li><li>Tired of approving every file? In the row under the message box, change the mode from <b>Manual</b> to <b>Accept edits</b>, and Claude stops asking before each file change.</li></ul>")}`,
+    },
+    {
+      ch: "setup",
+      title: "8. Connect Gmail and the weekly search",
+      nextLabel: "Next: practice the tracker",
+      body: `
+        <p>Claude walks you through both of these at the end of setup. Here is what to expect.</p>
+        <ol class="coach-clicks">
+          <li><b>Gmail.</b> In the Claude app, open <b>Settings</b>, then <b>Connectors</b>. Find <b>Gmail</b>, click <b>Connect</b>, and sign in with the Google account that gets your job email. You type your password on Google's own page; Claude never sees it. When it worked, the button changes to <b>Disconnect</b>.</li>
+          <li><b>The weekly search.</b> Claude sets up a scheduled task with you. Pick an evening when your Mac is usually on. Two settings matter: it runs <b>only on this computer</b> (not in the cloud), and its folder is <b>InternshipHunt</b>.</li>
+        </ol>
+        ${see("Claude confirms the weekly search is scheduled. If you say yes when it offers a first run now, new postings appear in your tracker on their own after a while.")}
+        <p>The search only runs while the Claude app is open and your Mac is awake, so on search night leave Claude open and the Mac plugged in. To stop the Mac from dozing off, turn on <b>Keep computer awake</b> in the Claude app under <b>Settings</b>, <b>This computer</b>, <b>System</b>. A closed laptop lid still puts it to sleep.</p>
+        ${stuck("<p>No problem. If a run was missed in the last 7 days, the Claude app runs it once the next time it opens or the Mac wakes up.</p>", "Missed a week?")}
+        <p>That is the whole install. Next, practice on Alex's tracker so you know every button before your own postings arrive.</p>`,
     },
 
     // ----- Find your way around -----
@@ -516,6 +609,9 @@
     el.title.textContent = s.title;
     el.body.innerHTML = s.body;
     el.bar.style.width = `${Math.round((idx / (STEPS.length - 1)) * 100)}%`;
+    // Reading-only steps (install, welcome, wrap-up) point at nothing in the
+    // practice tracker, so the phone-size sheet can take more of the screen.
+    document.body.classList.toggle("coach-tall", !s.target);
     renderTask();
     renderExtra(s);
     el.back.disabled = idx === 0;
@@ -531,7 +627,7 @@
       el.task.className = "coach-task hidden";
       el.task.innerHTML = "";
       el.mini.textContent = s.title;
-      el.next.textContent = "Next";
+      el.next.textContent = s.nextLabel || "Next";
       el.next.className = "coach-btn primary";
       return;
     }
@@ -559,8 +655,8 @@
         add("Teach me the tracker", "primary", () => goChapter("tour"));
         add("Show me the setup steps too", "", () => goChapter("setup"));
       } else {
-        add("Start from the beginning", "primary", () => goChapter("setup"));
-        add("Skip setup, teach me the tracker", "", () => goChapter("tour"));
+        add("Install it, step by step", "primary", () => goChapter("setup"));
+        add("Already installed? Learn the tracker", "", () => goChapter("tour"));
       }
       if (resume) add(`Pick up at: ${resume.title}`, "quiet", () => goChapter(resume.id));
     }

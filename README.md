@@ -10,15 +10,17 @@ Everything you enter stays on your own computer and runs on your own Claude acco
 
 ## Get it
 
-You need a Mac, a paid Claude plan (Pro or Max) with the Claude desktop app, and Node.js from https://nodejs.org.
+**Never used Terminal or GitHub?** The [tutorial's first chapter](https://brian-stockwell.github.io/InternshipHunt/) walks you through the whole install one click at a time, with a "you should see" check after every step.
 
-**Option A (Terminal):**
+You need a Mac (macOS 13 or newer), a paid Claude plan (Pro or Max) with the [Claude desktop app](https://claude.com/download), and the free macOS installer for [Node.js](https://nodejs.org/en/download).
+
+**Option A (no Terminal):** [download the ZIP](https://github.com/brian-stockwell/InternshipHunt/archive/refs/heads/main.zip). Unzip it if your browser did not, rename the folder from `InternshipHunt-main` to `InternshipHunt`, and move it into your home folder (Finder > Go > Home).
+
+**Option B (Terminal):**
 
 ```bash
 git clone https://github.com/brian-stockwell/InternshipHunt.git ~/InternshipHunt
 ```
-
-**Option B (no Terminal):** click the green **Code** button above, then **Download ZIP**. Unzip it, rename the folder from `InternshipHunt-main` to `InternshipHunt`, and drag it into your home folder (Finder > Go > Home).
 
 Either way the folder has to end up at `/Users/<your name>/InternshipHunt`.
 
